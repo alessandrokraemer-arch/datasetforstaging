@@ -1,0 +1,28 @@
+#!/bin/bash
+echo "Script com cunho acadêmico..."
+echo "Desenvolvido por Dr. Kraemer, Alessandro em Out/2026"
+echo "Indique o delimitador:"
+read delimitador
+echo "Indique o tamanho do VARCHAR:"
+read varchar
+
+echo "........"
+echo 'Automação para compor tabela em base de dados de restruturação'
+echo 'Arquivo para estrutura em BULK ...'$1
+echo 'Início da estrutura um CREATE TABLE...'
+
+ddl="("$(head -1 $1)"))"
+nomeTabela=$(echo $1 | sed 's/.csv//g')
+ddl="CREATE TABLE "$nomeTabela" "$ddl
+
+subs=" VARCHAR("$varchar"), "
+subsFinal=" VARCHAR("$varchar")"
+
+ddl=$(echo $ddl | sed 's/"//g')
+ddl=$(echo $ddl | sed "s/$delimitador/$subs/g")
+ddl=$(echo $ddl | sed "s/))/$subsFinal)/g")
+
+$(echo $ddl > $nomeTabela.sql)
+echo 'Finalizado o DDL da Tabela '$nomeTabela
+echo 'Script gravado em '$nomeTabela'.sql'
+
