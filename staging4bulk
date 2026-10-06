@@ -49,6 +49,5 @@ echo ")" >> $scriptComBulk
 echo "--- HERE AGAIN THE BACK TO NORMAL" >> $scriptComBulk
 echo "ALTER INDEX ALL ON "$nomeTabela" REBUILD;" >> $scriptComBulk
 echo "SET STATISTICS TIME OFF;" >> $scriptComBulk
-
-
+ 
 
