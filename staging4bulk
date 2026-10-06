@@ -1,0 +1,54 @@
+#!/bin/bash
+echo "Script com cunho acadêmico..."
+echo "Desenvolvido por Dr. Kraemer, Alessandro em Out/2026"
+
+echo "Volume original do arquivo " $(wc -c $1) " em bytes..."
+
+echo "Indique o delimitador de coluna nas tuplas:"
+read delimitador
+echo "Indique o caracter que finaliza a linha:"
+read linha
+echo "Dividir o lote em quantas partes inteiras:"
+read partes
+
+tamanhoCadaLote=$(wc -c $1 | cut -d " " -f1)
+tamanhoCadaLote=$(expr $tamanhoCadaLote / $partes)
+kilobytesLote=$(expr $tamanhoCadaLote / 1024)
+
+echo "Cada bloco no BULK está composto por " $kilobytesLote " KiloBytes."
+
+echo "........"
+echo 'Início da estrutura...agregando ao CREATE TABLE já criado...'
+echo 'Automação para compor um BULK com resultado de desempenho o Completion Time'
+echo "Index sendo desabilitado e se recompõem ao final do script..."
+
+nomeTabela=$(echo $1 | sed 's/.csv//g')
+scriptComBulk=$nomeTabela.sql
+
+echo "--- I RECOMMEND ALSO THE INCLUDING ON LINUX TELLING STORIES..." >> $scriptComBulk
+
+echo "--- HERE IS FOR SHOWING STATISTICS BY MS SQL SERVER´S SCHEDULING" >> $scriptComBulk
+
+echo "SET STATISTICS TIME ON;" >> $scriptComBulk
+
+echo "--- HERE IS FOR REDUCING THE LATENCY DURING THE LOAD THE ELT BY INSERTING. " >> $scriptComBulk
+echo "ALTER INDEX ALL ON '"$nomeTabela"' DISABLE;" >> $scriptComBulk
+
+echo "--- A BULK IS THE BEST WAY ..." >> $scriptComBulk
+
+echo "BULK INSERT '"$nomeTabela"'"" >> $scriptComBulk
+echo "FROM '"$caminhoDataset"'"" >> $scriptComBulk
+echo "WITH (" >> $scriptComBulk
+echo "  --- USUALY NUMBER 2" >> $scriptComBulk
+echo "  FIRSTROW = 2," >> $scriptComBulk
+echo "  FIELDTERMINATOR = '"$delimitador"'," >> $scriptComBulk
+echo "  ROWTERMINATOR = '"$linha"'," >> $scriptComBulk
+echo "  KILOBYTES_PER_BATCH = "$kilobytesLote >> $scriptComBulk
+echo ")" >> $scriptComBulk
+
+echo "--- HERE AGAIN THE BACK TO NORMAL" >> $scriptComBulk
+echo "ALTER INDEX ALL ON "$nomeTabela" REBUILD;" >> $scriptComBulk
+echo "SET STATISTICS TIME OFF;" >> $scriptComBulk
+
+
+
