@@ -1,17 +1,20 @@
 #!/bin/bash
-echo "Script com cunho acadêmico..."
-echo "Desenvolvido por Dr. Kraemer, Alessandro em Out/2026"
-echo "Indique o delimitador:"
+clear
+echo -e "\033[1;3mScript com cunho acadêmico...\033[m"
+echo -e "\033[1;3mDesenvolvido por Dr. Kraemer, Alessandro em Out/2026\033[0m\n"
+
+echo -e "\e[1;31mNome do Banco de Dados a ser usado:\e[0m"
+read bd
+echo -e "\e[1;31mO caractere separador das colunas no dataset:\e[0m"
 read delimitador
-echo "Indique o tamanho do VARCHAR:"
+echo -e "\e[1;31mO tamanho do VARCHAR para compor a Tabela:\e[0m"
 read varchar
 
-echo "........"
-echo 'Automação para compor tabela em base de dados de restruturação'
-echo 'Arquivo para estrutura em BULK ...'$1
-echo 'Início da estrutura um CREATE TABLE...'
+echo -e "\n........"
+echo -e "Automação para compor tabela em base de dados de restruturação\n"
 
 ddl="("$(head -1 $1)"))"
+ddl=$(echo $ddl | sed "s/\r//g")
 nomeTabela=$(echo $1 | sed 's/.csv//g')
 ddl="CREATE TABLE "$nomeTabela" "$ddl
 
@@ -21,8 +24,21 @@ subsFinal=" VARCHAR("$varchar")"
 ddl=$(echo $ddl | sed 's/"//g')
 ddl=$(echo $ddl | sed "s/$delimitador/$subs/g")
 ddl=$(echo $ddl | sed "s/))/$subsFinal)/g")
+ddl=$(echo $ddl";")
 
-$(echo $ddl > $nomeTabela.sql)
-echo 'Finalizado o DDL da Tabela '$nomeTabela
-echo 'Script gravado em '$nomeTabela'.sql'
+arquivoTmp=$nomeTabela".tmp"
 
+$(echo -e "--- delimitador "$delimitador > $arquivoTmp)
+$(echo "--- Os valores estão separados pelo delimitador na fonte de dados..." >> $arquivoTmp)
+$(echo "USE ["$bd"];" >> $arquivoTmp)
+
+$(echo $ddl >> $arquivoTmp)
+
+arquivoDDL=$nomeTabela".sql"
+$(cat $arquivoTmp | sed "s/,/,\n/g" > $arquivoDDL)
+
+echo -e "Script gravado em \e[1;31m$nomeTabela.sql\e[0m\n"
+
+cat $arquivoTmp
+
+rm $arquivoTmp
