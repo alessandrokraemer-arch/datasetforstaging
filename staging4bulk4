@@ -1,0 +1,3 @@
+TO DO: Desenvolver o script staging4bulk4 com intuito de 
+separar colunas e linhas se cabido em um arquivo de grande
+volume de dados...para isso utilizo bash com mais cut e split etc.
