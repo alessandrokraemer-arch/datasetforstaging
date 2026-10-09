@@ -15,7 +15,9 @@ O CV está disponível e com Direito Autoral ali no CNPq e autorizo para estudar
  - Ali propõe uma solução avançada acerca...
 
  Forma de uso:
+ 
  1º) staging4 arquivo.csv
+ 
  2º) staging4bulk arquivo.csv
 
  o output é um script SQL ...
